@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 
-const SERVER_URL = "http://localhost:3001";
+// const SERVER_URL = "http://localhost:3001";
+const socket = io("https://hundir-la-flotaa.onrender.com/");
 
 export function useSocket() {
   const socketRef = useRef(null);
