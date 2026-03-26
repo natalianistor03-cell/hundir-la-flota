@@ -99,13 +99,14 @@ function BattleVsPlayer({ playerGrid, socket }) {
           </div>
           <div>
             <p className="text-xs text-slate-500 uppercase tracking-widest mb-3 text-center">Flota rival</p>
-            <Grid
-              grid={emptyGrid()}
-              shots={myShots}
-              isEnemy={true}
-              onShoot={(r, c) => sendShot(r, c)}
-              active={myTurn && status === "playing"}
-            />
+          <Grid
+            grid={winner || opponentLeft ? socket.enemyGrid : emptyGrid()}
+            shots={myShots}
+            isEnemy={true}
+            onShoot={(r, c) => sendShot(r, c)}
+            active={myTurn && status === "playing"}
+          />
+
           </div>
         </div>
 

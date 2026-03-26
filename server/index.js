@@ -16,6 +16,7 @@ io.on("connection", (socket) => {
 
   // --- Crear o unirse a una sala ---
   socket.on("join_room", (roomId) => {
+    socket.roomId = roomId;
     const room = rooms[roomId];
 
     // Si la sala no existe la creamos
@@ -52,6 +53,7 @@ io.on("connection", (socket) => {
 
   // --- Jugador listo con su tablero colocado ---
   socket.on("grid_ready", ({ roomId, grid }) => {
+    socket.roomId = roomId;
     const room = rooms[roomId];
     if (!room) return;
 
@@ -109,16 +111,27 @@ io.on("connection", (socket) => {
   });
 
   // --- Jugador se desconecta ---
-  socket.on("disconnect", () => {
+    socket.on("disconnect", () => {
     console.log("Jugador desconectado:", socket.id);
+
     for (const [roomId, room] of Object.entries(rooms)) {
-      if (room.players.includes(socket.id)) {
+
+        // Si el jugador no estaba realmente en esta sala, ignorar
+        if (!room.players.includes(socket.id)) continue;
+
+        // Avisar al otro jugador
         io.to(roomId).emit("player_left");
+
+        // Eliminar solo al jugador, no toda la sala
+        room.players = room.players.filter(id => id !== socket.id);
+
+        // Si ya no queda nadie, borrar la sala
+        if (room.players.length === 0) {
         delete rooms[roomId];
         console.log(`Sala ${roomId} eliminada`);
-      }
+        }
     }
-  });
+    });
 });
 
 const PORT = process.env.PORT || 3001;
