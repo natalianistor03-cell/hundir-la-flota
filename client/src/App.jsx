@@ -104,7 +104,7 @@ function BattleVsPlayer({ playerGrid, socket }) {
             shots={myShots}
             isEnemy={true}
             onShoot={(r, c) => sendShot(r, c)}
-            active={myTurn && status === "playing"}
+            active={myTurn}
           />
 
           </div>

@@ -46,7 +46,7 @@ io.on("connection", (socket) => {
     room.status = "placing";
 
     // Avisamos a ambos jugadores que ya pueden colocar barcos
-    io.to(roomId).emit("room_joined", { role: "guest", roomId });
+    socket.emit("room_joined", { role: "guest", roomId });
     io.to(roomId).emit("start_placing");
     console.log(`Jugador ${socket.id} se unió a la sala ${roomId}`);
   });
