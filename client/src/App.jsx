@@ -159,10 +159,10 @@ function WaitingRoom({ roomId, role }) {
   );
 }
 
-// ─── App principal ───────────────────────────────────────────────────────────
+// ─── App principal con FOOTER ────────────────────────────────────────────────
 export default function App() {
-  const [mode, setMode]           = useState(null);       // null | "ai" | "multiplayer"
-  const [phase, setPhase]         = useState("menu");     // "menu" | "placing" | "playing"
+  const [mode, setMode]           = useState(null);
+  const [phase, setPhase]         = useState("menu");
   const [playerGrid, setPlayerGrid] = useState(null);
 
   const socket = useSocket();
@@ -173,86 +173,82 @@ export default function App() {
     setPlayerGrid(null);
   };
 
-  // ── Menú principal ──
-  if (phase === "menu") {
-    return (
-      <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center p-6">
-        <h1 className="text-4xl font-bold tracking-widest text-cyan-400 uppercase mb-2">
-          ⚓ Hundir la Flota
-        </h1>
-        <p className="text-slate-500 text-sm mb-12">Elige modo de juego</p>
+  return (
+    <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100">
 
-        <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
-          <button
-            onClick={() => { setMode("ai"); setPhase("placing"); }}
-            className="flex-1 py-6 rounded-lg bg-slate-900 border border-slate-700
-                       hover:border-cyan-500 text-slate-300 hover:text-cyan-400
-                       transition-colors text-center"
-          >
-            <div className="text-3xl mb-2">🤖</div>
-            <div className="font-bold tracking-widest uppercase text-sm">Vs IA</div>
-            <div className="text-xs text-slate-600 mt-1">Juega contra el ordenador</div>
-          </button>
+      {/* CONTENIDO PRINCIPAL */}
+      <div className="flex-grow">
+        {phase === "menu" && (
+          <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center p-6">
+            <h1 className="text-4xl font-bold tracking-widest text-cyan-400 uppercase mb-2">
+              ⚓ Hundir la Flota
+            </h1>
+            <p className="text-slate-500 text-sm mb-12">Elige modo de juego</p>
 
-          <button
-            onClick={() => { setMode("multiplayer"); setPhase("lobby"); }}
-            className="flex-1 py-6 rounded-lg bg-slate-900 border border-slate-700
-                       hover:border-cyan-500 text-slate-300 hover:text-cyan-400
-                       transition-colors text-center"
-          >
-            <div className="text-3xl mb-2">👥</div>
-            <div className="font-bold tracking-widest uppercase text-sm">Multijugador</div>
-            <div className="text-xs text-slate-600 mt-1">Juega con un amigo online</div>
-          </button>
-        </div>
+            <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md">
+              <button
+                onClick={() => { setMode("ai"); setPhase("placing"); }}
+                className="flex-1 py-6 rounded-lg bg-slate-900 border border-slate-700
+                           hover:border-cyan-500 text-slate-300 hover:text-cyan-400
+                           transition-colors text-center"
+              >
+                <div className="text-3xl mb-2">🤖</div>
+                <div className="font-bold tracking-widest uppercase text-sm">Vs IA</div>
+                <div className="text-xs text-slate-600 mt-1">Juega contra el ordenador</div>
+              </button>
+
+              <button
+                onClick={() => { setMode("multiplayer"); setPhase("lobby"); }}
+                className="flex-1 py-6 rounded-lg bg-slate-900 border border-slate-700
+                           hover:border-cyan-500 text-slate-300 hover:text-cyan-400
+                           transition-colors text-center"
+              >
+                <div className="text-3xl mb-2">👥</div>
+                <div className="font-bold tracking-widest uppercase text-sm">Multijugador</div>
+                <div className="text-xs text-slate-600 mt-1">Juega con un amigo online</div>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {mode === "multiplayer" && phase === "lobby" && (
+          socket.role && socket.phase === "lobby"
+            ? <WaitingRoom roomId={socket.roomId} role={socket.role} />
+            : socket.phase === "placing"
+              ? (
+                <ShipPlacer onReady={(grid) => {
+                  setPlayerGrid(grid);
+                  socket.sendGrid(grid);
+                  setPhase("playing");
+                }} />
+              )
+              : (
+                <Lobby
+                  onJoin={socket.joinRoom}
+                  error={socket.error}
+                  connected={socket.connected}
+                />
+              )
+        )}
+
+        {mode === "ai" && phase === "placing" && (
+          <ShipPlacer onReady={(grid) => {
+            setPlayerGrid(grid);
+            setPhase("playing");
+          }} />
+        )}
+
+        {phase === "playing" && playerGrid && (
+          mode === "ai"
+            ? <BattleVsAI playerGrid={playerGrid} onReset={handleReset} />
+            : <BattleVsPlayer playerGrid={playerGrid} socket={socket} />
+        )}
       </div>
-    );
-  }
 
-  // ── Lobby multijugador ──
-  if (mode === "multiplayer" && phase === "lobby") {
-    // Si ya estamos en sala esperando al rival
-    if (socket.role && socket.phase === "lobby") {
-      return <WaitingRoom roomId={socket.roomId} role={socket.role} />;
-    }
-    // Si el servidor dice que empiece la colocación
-    if (socket.phase === "placing") {
-      return (
-        <ShipPlacer onReady={(grid) => {
-          setPlayerGrid(grid);
-          socket.sendGrid(grid);
-          setPhase("playing");
-        }} />
-      );
-    }
-    return (
-      <Lobby
-        onJoin={socket.joinRoom}
-        error={socket.error}
-        connected={socket.connected}
-      />
-    );
-  }
-
-  // ── Fase de colocación (modo IA) ──
-  if (mode === "ai" && phase === "placing") {
-    return (
-      <ShipPlacer onReady={(grid) => {
-        setPlayerGrid(grid);
-        setPhase("playing");
-      }} />
-    );
-  }
-
-  // ── Batalla ──
-  if (phase === "playing" && playerGrid) {
-    if (mode === "ai") {
-      return <BattleVsAI playerGrid={playerGrid} onReset={handleReset} />;
-    }
-    if (mode === "multiplayer") {
-      return <BattleVsPlayer playerGrid={playerGrid} socket={socket} />;
-    }
-  }
-
-  return null;
+      {/* FOOTER */}
+      <footer className="w-full text-center py-4 text-slate-500 text-xs tracking-widest border-t border-slate-800">
+        Hundir la Flota · Creado por ꋊatalia ꋊistor &copy;
+      </footer>
+    </div>
+  );
 }
