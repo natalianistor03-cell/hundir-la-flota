@@ -3,9 +3,19 @@ const http = require("http");
 const { Server } = require("socket.io");
 
 const app = express();
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  next();
+});
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: { origin: "*" } // permite conexiones desde React en local
+  cors: {
+    origin: [
+        "http://localhost:5173",
+        "https://hundirflotann.netlify.app/"
+    ],
+    methods: ["GET", "POST"]
+  }
 });
 
 const rooms = {}; // guarda el estado de cada sala
