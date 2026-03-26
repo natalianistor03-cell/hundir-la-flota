@@ -3,18 +3,16 @@ const http = require("http");
 const { Server } = require("socket.io");
 
 const app = express();
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  next();
-});
 const server = http.createServer(app);
+
 const io = new Server(server, {
   cors: {
     origin: [
-        "http://localhost:5173",
-        "https://hundirflotann.netlify.app/"
+      "http://localhost:5173",
+      "https://hundirflotann.netlify.app"  // URL real
     ],
-    methods: ["GET", "POST"]
+    methods: ["GET", "POST"],
+    credentials: true
   }
 });
 
