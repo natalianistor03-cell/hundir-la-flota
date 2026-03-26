@@ -1,16 +1,258 @@
-# React + Vite
+\# ⚓ Hundir la Flota — Multiplayer \& IA
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Juego clásico de \*Battleship\* desarrollado con \*\*React\*\*, \*\*TailwindCSS\*\* y \*\*Socket.io\*\*, con dos modos de juego:
 
-## React Compiler
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-## Expanding the ESLint configuration
+\- 🤖 \*\*Vs IA\*\* — juega contra un enemigo controlado por el ordenador  
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+\- 👥 \*\*Multijugador online\*\* — juega con un amigo usando un código de sala  
+
+
+
+El cliente está desplegado en \*\*Netlify\*\* y el servidor en \*\*Render\*\*.
+
+
+
+---
+
+
+
+\## 🚀 Tecnologías utilizadas
+
+
+
+| Parte | Tecnología |
+
+|------|------------|
+
+| Frontend | React + Vite |
+
+| Estilos | TailwindCSS |
+
+| Comunicación en tiempo real | Socket.io |
+
+| Backend | Node.js + Express |
+
+| Hosting cliente | Netlify |
+
+| Hosting servidor | Render |
+
+
+
+---
+
+
+
+\## 🎮 Características
+
+
+
+\- Colocación manual de barcos  
+
+\- IA con disparos inteligentes  
+
+\- Sistema de turnos  
+
+\- Tableros animados  
+
+\- Historial de partidas (modo IA)  
+
+\- Multijugador online con código de sala  
+
+\- Indicadores de aciertos y fallos  
+
+\- Diseño moderno con TailwindCSS  
+
+\- Footer global  
+
+\- Favicon SVG personalizado  
+
+
+
+---
+
+
+
+\## 🧩 Estructura del proyecto
+
+
+
+/client        → React + Vite (frontend)
+
+/server        → Express + Socket.io  (backend)
+
+
+
+
+
+---
+
+
+
+\## 🛠 Instalación y ejecución local
+
+
+
+\### 1. Clonar el repositorio
+
+
+
+```bash
+
+git clone https://github.com/tu-usuario/hundir-la-flota.git
+
+cd hundir-la-flota
+
+&nbsp;cd client
+
+npm install
+
+npm run dev
+
+
+
+cd ../server
+
+npm install
+
+npm start
+
+
+
+
+
+\##🌐 Despliegue
+
+
+
+Cliente (Netlify)
+
+Base directory: client
+
+
+
+Build command: npm run build
+
+
+
+Publish directory: client/dist
+
+
+
+Servidor (Render)
+
+Tipo: Web Service
+
+
+
+Build command: npm install
+
+
+
+Start command: node server.js
+
+
+
+Puerto: process.env.PORT
+
+
+
+
+
+\##🔌 Comunicación cliente-servidor
+
+
+
+El cliente usa un hook personalizado:
+
+
+
+js
+
+const SERVER\_URL = "https://hundir-la-flotaa.onrender.com";
+
+const socket = io(SERVER\_URL);
+
+
+
+Eventos principales:
+
+
+
+join\_room
+
+
+
+start\_placing
+
+
+
+battle\_start
+
+
+
+shoot
+
+
+
+shot\_result
+
+
+
+game\_over
+
+
+
+player\_left
+
+
+
+\## 🎨 Favicon personalizado
+
+
+
+html
+
+<link rel="icon" href="data:image/svg+xml,
+
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>
+
+&nbsp; <rect width='100' height='100' fill='white'/>
+
+&nbsp; <text x='50' y='72' font-size='90' text-anchor='middle'>ꋊ</text>
+
+</svg>">
+
+
+
+
+
+\## 🦶 Footer
+
+
+
+Incluido globalmente en App.jsx:
+
+
+
+jsx
+
+<footer className="w-full text-center py-4 text-slate-500 text-xs tracking-widest border-t border-slate-800">
+
+&nbsp; Hundir la Flota · Creado por Natalia
+
+</footer>
+
+
+
+
+
+\## 📜 Licencia
+
+
+
+Este proyecto es de uso libre para aprendizaje y desarrollo personal.
+

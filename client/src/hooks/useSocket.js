@@ -16,6 +16,8 @@ export function useSocket() {
   const [winner, setWinner]           = useState(null);     // "me" | "opponent"
   const [opponentLeft, setOpponentLeft] = useState(false);
   const [error, setError]             = useState("");
+  const [enemyGrid, setEnemyGrid] = useState(null);
+
 
   useEffect(() => {
     // Creamos la conexión al montar el hook
@@ -83,6 +85,13 @@ export function useSocket() {
       setPhase("finished");
     });
 
+    // Ver barcos despues de finalizar
+    socket.on("reveal_grids", (grids) => {
+        const enemyId = Object.keys(grids).find(id => id !== socket.id);
+        setEnemyGrid(grids[enemyId]);
+    });
+
+
     return () => socket.disconnect();
   }, []);
 
@@ -108,5 +117,6 @@ export function useSocket() {
     myTurn, myShots, opponentShots,
     winner, opponentLeft, error,
     joinRoom, sendGrid, sendShot,
+    enemyGrid
   };
 }

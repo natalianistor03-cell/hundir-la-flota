@@ -66,6 +66,7 @@ io.on("connection", (socket) => {
       room.status = "playing";
       room.turn = room.players[0]; // el host empieza
       io.to(roomId).emit("battle_start", { turn: room.turn });
+      io.to(roomId).emit("reveal_grids", room.grids);
     }
   });
 
