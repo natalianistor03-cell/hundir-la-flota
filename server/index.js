@@ -24,6 +24,7 @@ io.on("connection", (socket) => {
 
   // --- Crear o unirse a una sala ---
   socket.on("join_room", (roomId) => {
+    roomId = roomId.trim().toUpperCase(); // formato moviles
     socket.roomId = roomId;
     const room = rooms[roomId];
 
